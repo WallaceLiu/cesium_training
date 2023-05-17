@@ -1,6 +1,8 @@
+<!--支持从VT MAK VR-TheWorld Server服务器请求的高度地图地形图。-->
 <!DOCTYPE html>
+
 <head>
-  <title>WebMapTileService</title>
+  <title>Hello World</title>
   <script src="../Build/Cesium/Cesium.js"></script>
   <link href="../Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
   <style>
@@ -15,11 +17,12 @@
     }
   </style>
 </head>
+
 <body>
   <div id="cesiumContainer"></div>
   <script>
     // 用你自己的token
-    Cesium.Ion.defaultAccessToken ='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhMGVkN2MyNi1jMDY1LTQ3OTctOTJkNC0yMjAxOGJlN2FlM2UiLCJpZCI6MTMzNzA0LCJpYXQiOjE2ODE0NTc2ODR9.dHXLu1RU1Eitzn6OfvDX77DQXd5HVRzZddeZqkJj7-Q'
+    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhMGVkN2MyNi1jMDY1LTQ3OTctOTJkNC0yMjAxOGJlN2FlM2UiLCJpZCI6MTMzNzA0LCJpYXQiOjE2ODE0NTc2ODR9.dHXLu1RU1Eitzn6OfvDX77DQXd5HVRzZddeZqkJj7-Q'
 
     var viewer = new Cesium.Viewer("cesiumContainer", {
       animation: false, // 动画小组件
@@ -34,23 +37,31 @@
       timeline: false, // 时间轴
       navigationHelpButton: false, // 帮助提示，如何操作数字地球。
       navigationInstructionsInitiallyVisible: false, // 如果最初应该看到导航说明，则为true；如果直到用户明确单击该按钮，则该提示不显示，否则为false。
+      shouldAnimate: true,
     });
 
     // 隐藏logo
     viewer._cesiumWidget._creditContainer.style.display = "none";
 
-    // 1、createWorldImagery。为ion的默认全局基础图像图层（当前为Bing Maps）创建一个 IonImageryProvider 实例。
+    // viewer.scene.primitives.add(Cesium.createOsmBuildings());
+    (async () => {
+      try {
+        const tileset = await Cesium.Cesium3DTileset.fromIonAssetId(96188);
+        viewer.scene.primitives.add(tileset);
+        await viewer.zoomTo(tileset);
 
-    var styles = [
-      Cesium.IonWorldImageryStyle.AERIAL, // 航空影像
-      Cesium.IonWorldImageryStyle.AERIAL_WITH_LABELS, // 带有道路覆盖物的航空影像
-      Cesium.IonWorldImageryStyle.ROAD, // 没有其他图像的道路
-    ];
-
-    var imageryProvider = Cesium.createWorldImagery({
-      style: styles[2], // default: IonWorldImageryStyle
-    });
-
-    viewer.imageryLayers.addImageryProvider(imageryProvider);
+        // Apply the default style if it exists
+        const extras = tileset.asset.extras;
+        if (
+          Cesium.defined(extras) &&
+          Cesium.defined(extras.ion) &&
+          Cesium.defined(extras.ion.defaultStyle)
+        ) {
+          tileset.style = new Cesium.Cesium3DTileStyle(extras.ion.defaultStyle);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    })();
   </script>
 </body>

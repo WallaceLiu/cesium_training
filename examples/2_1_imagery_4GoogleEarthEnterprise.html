@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <head>
   <title>GoogleEarth</title>
   <script src="../Build/Cesium/Cesium.js"></script>
@@ -15,9 +16,13 @@
     }
   </style>
 </head>
+
 <body>
   <div id="cesiumContainer"></div>
   <script>
+    // 用你自己的token
+    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhMGVkN2MyNi1jMDY1LTQ3OTctOTJkNC0yMjAxOGJlN2FlM2UiLCJpZCI6MTMzNzA0LCJpYXQiOjE2ODE0NTc2ODR9.dHXLu1RU1Eitzn6OfvDX77DQXd5HVRzZddeZqkJj7-Q'
+
     var viewer = new Cesium.Viewer("cesiumContainer", {
       animation: false, // 动画小组件
       baseLayerPicker: false, // 底图组件，选择三维数字地球的底图（imagery and terrain）。
@@ -43,10 +48,13 @@
     // 使用谷歌Earth企业REST API提供瓦片图像，
     // 注意:此提供程序可与Google Earth Enterprise的3D Earth API一起使用， GoogleEarthEnterpriseMapsProvider 应该与2D Maps API一起使用。
     var geeMetadata = new Cesium.GoogleEarthEnterpriseMetadata(
-      "http://www.earthenterprise.org/3d"
+      "http://www.earthenterprise.org/3d",
     );
     var googleEarthProvider = new Cesium.GoogleEarthEnterpriseImageryProvider({
       metadata: geeMetadata,
+      // headers: {
+      //   'access-control-allow-origin': 'www.earthenterprise.org',
+      // },
     });
     imageryLayers.addImageryProvider(googleEarthProvider);
   </script>
